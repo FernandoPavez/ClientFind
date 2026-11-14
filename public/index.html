@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClientFind</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="marca">
+      <span class="logo">📡</span>
+      <div>
+        <h1>ClientFind</h1>
+        <p id="sub-marca">Negocios que necesitan una página web</p>
+      </div>
+    </div>
+    <div class="chips-top" id="chips-top"></div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="buscar">🔎 Buscar</button>
+    <button data-tab="leads">📋 Leads <span class="cuenta" id="cuenta-leads"></span></button>
+    <button data-tab="resultados">📊 Resultados</button>
+    <button data-tab="automaticas">⏰ Búsquedas automáticas</button>
+    <button data-tab="config">⚙️ Configuración</button>
+  </nav>
+
+  <div id="aviso-demo" class="aviso" hidden></div>
+
+  <main>
+    <!-- BUSCAR -->
+    <section id="vista-buscar" class="vista" hidden>
+      <div class="panel buscar">
+        <h2>Buscar negocios en Google Maps</h2>
+        <p class="muted">Escribe qué tipo de negocio buscas y en qué comuna(s). La app revisa cada resultado y te deja los que <b>no tienen web</b>, solo tienen redes sociales, tienen la web caída o una web que se puede mejorar.</p>
+        <form id="form-buscar" class="form-grid">
+          <label>Rubro
+            <input name="rubro" list="lista-rubros" placeholder="ej: peluquerías" required autocomplete="off">
+          </label>
+          <label>Comuna(s) <small>separa varias con coma</small>
+            <input name="comuna" list="lista-comunas" placeholder="ej: Maipú, Ñuñoa" autocomplete="off">
+          </label>
+          <label>Resultados por comuna
+            <select name="max">
+              <option value="20">20 (1 llamada a Google)</option>
+              <option value="40" selected>40 (2 llamadas)</option>
+              <option value="60">60 (3 llamadas, el máximo)</option>
+            </select>
+          </label>
+          <div class="fila-check">
+            <label class="check"><input type="checkbox" name="guardar"> Repetir automáticamente cada
+              <input type="number" name="cadaHoras" value="24" min="1" class="mini"> horas y avisarme de los nuevos</label>
+          </div>
+          <div class="acciones">
+            <button class="btn primario" type="submit" id="btn-buscar">Buscar</button>
+          </div>
+        </form>
+        <div class="sugerencias">
+          <span class="muted">Ideas:</span>
+          <div id="chips-rubros" class="chips"></div>
+        </div>
+      </div>
+      <div id="resultado-busqueda"></div>
+    </section>
+
+    <!-- LEADS -->
+    <section id="vista-leads" class="vista" hidden>
+      <div class="pipeline" id="pipeline"></div>
+      <div class="filtros">
+        <input id="f-texto" type="search" placeholder="Buscar por nombre, dirección, nota…">
+        <select id="f-categoria">
+          <option value="oportunidades">Solo oportunidades</option>
+          <option value="todas">Toda situación web</option>
+          <option value="sin_web">Sin web</option>
+          <option value="red_social">Solo redes sociales</option>
+          <option value="plataforma">Plataforma de reservas/pedidos</option>
+          <option value="caida">Web caída</option>
+          <option value="mejorable">Web mejorable</option>
+          <option value="ok">Web OK</option>
+          <option value="no_verificable">Revisar a mano</option>
+          <option value="pendiente">Analizando…</option>
+        </select>
+        <select id="f-busqueda"><option value="">Todas las búsquedas</option></select>
+        <select id="f-orden">
+          <option value="prioridad">Ordenar: prioridad</option>
+          <option value="resenas">Ordenar: más reseñas</option>
+          <option value="rating">Ordenar: mejor rating</option>
+          <option value="recientes">Ordenar: más recientes</option>
+          <option value="nombre">Ordenar: nombre</option>
+        </select>
+        <label class="check"><input type="checkbox" id="f-wa"> Solo con WhatsApp</label>
+        <a class="btn" href="/api/export.csv">⬇️ Exportar a Excel (CSV)</a>
+      </div>
+      <div id="lista-leads" class="lista"></div>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section id="vista-resultados" class="vista" hidden>
+      <div id="resultados"></div>
+    </section>
+
+    <!-- AUTOMATICAS -->
+    <section id="vista-automaticas" class="vista" hidden>
+      <div class="panel">
+        <h2>Búsquedas automáticas</h2>
+        <p class="muted">Mientras la app esté abierta, repite estas búsquedas cada cierto tiempo. Si aparecen negocios nuevos con buena prioridad, te avisa por Telegram (configúralo en ⚙️). Cada repetición consume llamadas a Google, así que no abuses: cada 24–72 h está bien.</p>
+        <form id="form-auto" class="form-grid compacto">
+          <label>Rubro <input name="rubro" list="lista-rubros" required></label>
+          <label>Comuna <input name="comuna" list="lista-comunas"></label>
+          <label>Cada (horas) <input name="cadaHoras" type="number" min="1" value="48"></label>
+          <label>Resultados
+            <select name="max"><option>20</option><option selected>40</option><option>60</option></select>
+          </label>
+          <div class="acciones"><button class="btn primario">Agregar</button></div>
+        </form>
+      </div>
+      <div id="lista-auto"></div>
+    </section>
+
+    <!-- CONFIG -->
+    <section id="vista-config" class="vista" hidden>
+      <form id="form-config">
+        <div class="panel">
+          <h2>Google</h2>
+          <label>API key de Google Cloud
+            <input name="googleApiKey" placeholder="AIza…" autocomplete="off">
+            <small>Necesita activadas <b>Places API (New)</b> y (opcional) <b>PageSpeed Insights API</b>. Se guarda solo en tu computador. Pasos en docs/INSTALACION.md.</small>
+          </label>
+          <div class="form-grid">
+            <label>Ciudad / región que se agrega a las búsquedas
+              <input name="ciudadPorDefecto" placeholder="Región Metropolitana, Chile">
+            </label>
+            <label>Código de país
+              <input name="regionCode" maxlength="2" placeholder="CL">
+            </label>
+            <label>Resultados por defecto
+              <select name="maxResultados"><option value="20">20</option><option value="40">40</option><option value="60">60</option></select>
+            </label>
+          </div>
+          <div class="form-grid">
+            <label>Límite mensual de llamadas de búsqueda
+              <input name="limiteMensualBusquedas" type="number" min="0">
+              <small>Google regala 1.000 al mes. Con 900 nunca pagas: la app deja de buscar al llegar al límite.</small>
+            </label>
+            <label>Límite mensual de fotos
+              <input name="limiteMensualFotos" type="number" min="0">
+              <small>También 1.000 gratis. Al llegar al límite, las maquetas se muestran sin fotos.</small>
+            </label>
+          </div>
+          <label class="check"><input type="checkbox" name="pagespeedAuto"> Medir velocidad en celular con PageSpeed en cada análisis (más lento, más preciso)</label>
+          <label class="check"><input type="checkbox" name="demo"> Usar modo demo (datos ficticios) aunque tenga API key</label>
+        </div>
+
+        <div class="panel">
+          <h2>Tus datos (para los mensajes y maquetas)</h2>
+          <div class="form-grid">
+            <label>Tu nombre <input name="miNombre"></label>
+            <label>Tu negocio <input name="miNegocio"></label>
+            <label>Tu Instagram (sin @) <input name="miInstagram"></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Contacto responsable</h2>
+          <div class="form-grid">
+            <label>Límite diario de contactos
+              <input name="limiteDiario" type="number" min="1">
+              <small>Te avisa al pasarlo. Mandar muchos mensajes en frío seguidos hace que WhatsApp te bloquee.</small>
+            </label>
+            <label>Días antes de sugerir seguimiento
+              <input name="diasSeguimiento" type="number" min="1">
+            </label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Plantillas de mensaje</h2>
+          <p class="muted">La app elige sola la plantilla según la situación web de cada negocio. Si escribes una <b>versión B</b>, la mitad de los negocios recibe la A y la otra mitad la B, y en 📊 Resultados ves cuál responde más.</p>
+          <p class="muted">Variables: <code>{nombre}</code> <code>{problema}</code> <code>{plataforma}</code> <code>{reputacion}</code> <code>{en_comuna}</code> <code>{comuna}</code> <code>{rubro}</code> <code>{rating}</code> <code>{resenas}</code> <code>{mi_nombre}</code> <code>{mi_negocio}</code> <code>{mi_instagram}</code></p>
+          <div id="editor-plantillas"></div>
+          <button type="button" class="btn" id="btn-tpl-reset">Restaurar plantillas originales</button>
+        </div>
+
+        <div class="panel">
+          <h2>Avisos por Telegram (opcional)</h2>
+          <p class="muted">1) En Telegram habla con <b>@BotFather</b>, escribe <code>/newbot</code> y copia el token. 2) Escríbele cualquier cosa a tu bot nuevo. 3) Abre <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code> y copia el número de <code>"chat":{"id": …}</code>.</p>
+          <div class="form-grid">
+            <label>Token del bot <input name="telegramToken" autocomplete="off"></label>
+            <label>Chat ID <input name="telegramChatId"></label>
+            <label>Avisar desde prioridad <input name="prioridadMinimaAviso" type="number" min="0" max="100"></label>
+          </div>
+          <button type="button" class="btn" id="btn-telegram">Enviar mensaje de prueba</button>
+        </div>
+
+        <div class="barra-guardar">
+          <button class="btn primario" type="submit">Guardar configuración</button>
+          <button class="btn peligro" type="button" id="btn-borrar-demo">Borrar leads de demo</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Panel lateral de detalle -->
+  <div id="fondo-drawer" class="fondo" hidden></div>
+  <aside id="drawer" class="drawer" hidden></aside>
+
+  <div id="toasts"></div>
+
+  <datalist id="lista-rubros"></datalist>
+  <datalist id="lista-comunas"></datalist>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
