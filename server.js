@@ -239,7 +239,7 @@ function estadisticas() {
 }
 
 // ---------- HTTP ----------
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
+const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.woff2': 'font/woff2' };
 const PUBLIC = path.join(ROOT, 'public');
 
 function enviar(res, status, data, headers = {}) {
@@ -360,6 +360,7 @@ async function manejar(req, res) {
         if (!lead.contactos) { lead.plantillaUsada = plantilla || 'manual'; lead.primerContactoFecha = ahora; }
         lead.ultimoContacto = ahora;
         lead.contactos = (lead.contactos || 0) + 1;
+        lead.visto = true;
         if (['nuevo', 'contactado'].includes(lead.estado)) lead.estado = 'contactado';
       }
       if (body.deshacerContacto) {

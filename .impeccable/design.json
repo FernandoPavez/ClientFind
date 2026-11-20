@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T22:00:00-03:00",
+  "title": "Design System: ClientFind",
+  "extensions": {
+    "colorMeta": {
+      "morado": { "role": "primary", "displayName": "Morado KaiKira", "canonical": "#6430FA", "tonalRamp": ["#1E0B52", "#2F1386", "#4A1FD1", "#6430FA", "#8F78E6", "#B9A8FB", "#DCD2FD", "#F1EDFF"] },
+      "morado-osc": { "role": "primary", "displayName": "Morado Tinta Profunda", "canonical": "#4A1FD1", "tonalRamp": ["#170947", "#250F74", "#3615A3", "#4A1FD1", "#6E4DE0", "#9A84EB", "#C8BBF5", "#EDE8FD"] },
+      "cian": { "role": "secondary", "displayName": "Cian Margen", "canonical": "#02C5EF", "tonalRamp": ["#00303B", "#004E60", "#007A94", "#02A6CA", "#02C5EF", "#5ADCF6", "#A8EDFB", "#E3F9FE"] },
+      "tinta": { "role": "neutral", "displayName": "Tinta Noche", "canonical": "#1A1833", "tonalRamp": ["#0D0C1A", "#1A1833", "#2C2A4A", "#55526E", "#7D7A93", "#A6A3B8", "#D0CEDC", "#F2F1F7"] },
+      "tinta-2": { "role": "neutral", "displayName": "Tinta Gastada", "canonical": "#55526E", "tonalRamp": ["#1C1B27", "#2E2C40", "#413F57", "#55526E", "#77748C", "#9A98AB", "#C4C2D0", "#ECEBF1"] },
+      "papel": { "role": "neutral", "displayName": "Papel Lila", "canonical": "#FBFAFF", "tonalRamp": ["#2A2840", "#4A4766", "#76728F", "#A5A1BD", "#CFCBE6", "#E8E5F7", "#F4F2FD", "#FBFAFF"] },
+      "lila": { "role": "neutral", "displayName": "Lila Claro", "canonical": "#EFEBFF", "tonalRamp": ["#251C55", "#3D3080", "#5C4DAD", "#8577D2", "#B0A6EC", "#D6CFFA", "#EFEBFF", "#F9F7FF"] },
+      "linea": { "role": "neutral", "displayName": "Línea de Cuadrícula", "canonical": "#E2DDF5", "tonalRamp": ["#26213F", "#3F3866", "#5F5790", "#857DB4", "#AFA8D4", "#E2DDF5", "#EEEBFA", "#F8F6FE"] },
+      "ficha": { "role": "neutral", "displayName": "Ficha Blanca", "canonical": "#FFFFFF", "tonalRamp": ["#1A1833", "#3A3852", "#5E5C74", "#86849A", "#B0AEC0", "#D7D6E1", "#F0EFF5", "#FFFFFF"] },
+      "borde-campo": { "role": "neutral", "displayName": "Borde de Campo", "canonical": "#CFC8EA", "tonalRamp": ["#221D3C", "#3A3363", "#58508D", "#7E75B3", "#A79FD0", "#CFC8EA", "#E6E1F6", "#F6F4FD"] },
+      "lila-riel": { "role": "neutral", "displayName": "Lila de Riel", "canonical": "#E4DCFF", "tonalRamp": ["#22185A", "#382A89", "#5541B5", "#7A66D8", "#A595EF", "#E4DCFF", "#F0EBFF", "#FAF8FF"] },
+      "verde": { "role": "state", "displayName": "Verde Respondió", "canonical": "#15803D", "tonalRamp": ["#052E14", "#0B4A23", "#166534", "#15803D", "#2FA55A", "#7ACB95", "#BFE6CB", "#EEF8F1"] },
+      "rojo": { "role": "state", "displayName": "Rojo Caída", "canonical": "#C2261C", "tonalRamp": ["#3D0A07", "#65120D", "#921C14", "#C2261C", "#E0554B", "#F3B4AE", "#FAD9D5", "#FFF4F2"] },
+      "ambar": { "role": "state", "displayName": "Ámbar Seguimiento", "canonical": "#A15C00", "tonalRamp": ["#311B00", "#522E00", "#784400", "#A15C00", "#CC8217", "#E6B467", "#F5DDB3", "#FDF4E6"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Número de prioridad de la cuenta en foco (56px bajo 1180px, 40px en celular)." },
+      "headline": { "displayName": "Headline", "purpose": "Título de etapa en la cabecera de la hoja; 26px en celular y en el detalle." },
+      "number": { "displayName": "Number", "purpose": "Prioridad de cada renglón; 24px en celular." },
+      "title": { "displayName": "Title", "purpose": "Nombre del negocio en la cuenta en foco." },
+      "title-sm": { "displayName": "Title Small", "purpose": "Encabezados de sección del detalle y de fichas." },
+      "body-strong": { "displayName": "Body Strong", "purpose": "Nombre del negocio en un renglón." },
+      "body": { "displayName": "Body", "purpose": "Texto base, campos y riel." },
+      "label": { "displayName": "Label", "purpose": "Situación web, estado, botones y etiquetas." },
+      "caption": { "displayName": "Caption", "purpose": "Direcciones, detalles y conteos del riel." }
+    },
+    "shadows": [
+      { "name": "levante-foco", "value": "0 14px 30px -22px rgba(74,31,209,.55)", "purpose": "Solo bajo la cuenta en foco." },
+      { "name": "borde-detalle", "value": "-24px 0 50px -24px rgba(26,24,51,.45)", "purpose": "Panel de detalle sobre la hoja, con velo rgba(26,24,51,.4)." },
+      { "name": "aviso", "value": "0 12px 30px -12px rgba(26,24,51,.6)", "purpose": "Toasts de tinta." }
+    ],
+    "motion": [
+      { "name": "entra-detalle", "value": "200ms cubic-bezier(.2,.8,.2,1)", "purpose": "El detalle entra deslizando 28px desde la derecha con fundido." },
+      { "name": "sube-aviso", "value": "200ms ease-out", "purpose": "Toast sube 10px con fundido." },
+      { "name": "hover-renglon", "value": "120ms", "purpose": "Transición del fondo del renglón." },
+      { "name": "pulso-pendiente", "value": "1.2s infinite", "purpose": "Situación web pendiente pulsa a .5 de opacidad." },
+      { "name": "reduced-motion", "value": "none", "purpose": "Con prefers-reduced-motion se quitan pulso, entradas y transición del renglón." }
+    ],
+    "breakpoints": [
+      { "name": "medio", "value": "1180px" },
+      { "name": "angosto", "value": "980px" },
+      { "name": "celular", "value": "760px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Acción neutra: contorno de tinta sobre blanco.",
+      "html": "<button class=\"ds-btn\">Maps</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 6px; font: 600 14px var(--texto, 'Instrument Sans', system-ui, sans-serif); padding: 9px 15px; border-radius: 10px; border: 1.5px solid var(--tinta, #1A1833); background: #fff; color: var(--tinta, #1A1833); cursor: pointer; } .ds-btn:hover { background: var(--lila, #EFEBFF); } .ds-btn:focus-visible { outline: 2.5px solid var(--morado, #6430FA); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal de una vista.",
+      "html": "<button class=\"ds-btn-primario\">Buscar negocios</button>",
+      "css": ".ds-btn-primario { display: inline-flex; align-items: center; gap: 6px; font: 600 14px var(--texto, 'Instrument Sans', system-ui, sans-serif); padding: 9px 15px; border-radius: 10px; border: 1.5px solid var(--morado, #6430FA); background: var(--morado, #6430FA); color: #fff; cursor: pointer; } .ds-btn-primario:hover { background: var(--morado-osc, #4A1FD1); border-color: var(--morado-osc, #4A1FD1); } .ds-btn-primario:focus-visible { outline: 2.5px solid var(--morado, #6430FA); outline-offset: 2px; }"
+    },
+    {
+      "name": "WhatsApp (renglón)",
+      "kind": "button",
+      "refersTo": "button-whatsapp-outline",
+      "description": "WhatsApp en renglones comunes: contorno verde; el verde lleno es de la cuenta en foco.",
+      "html": "<button class=\"ds-btn-wa\">WhatsApp</button>",
+      "css": ".ds-btn-wa { display: inline-flex; align-items: center; font: 600 13px var(--texto, 'Instrument Sans', system-ui, sans-serif); padding: 6px 11px; border-radius: 8px; border: 1.5px solid var(--verde, #15803d); background: #fff; color: var(--verde, #15803d); cursor: pointer; } .ds-btn-wa:hover { background: #EEF8F1; } .ds-btn-wa:focus-visible { outline: 2.5px solid var(--morado, #6430FA); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Input de búsqueda y formularios.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Buscar por nombre, dirección, nota…\">",
+      "css": ".ds-input { font: 400 15px var(--texto, 'Instrument Sans', system-ui, sans-serif); width: 100%; padding: 10px 12px; border: 1.5px solid #CFC8EA; border-radius: 10px; background: #fff; color: var(--tinta, #1A1833); } .ds-input::placeholder { color: #6E6A86; } .ds-input:focus { outline: 3px solid var(--lila, #EFEBFF); border-color: var(--morado, #6430FA); }"
+    },
+    {
+      "name": "Etapas",
+      "kind": "nav",
+      "refersTo": "etapas",
+      "description": "Pestañas de etapa subrayadas sobre la línea de tinta.",
+      "html": "<nav class=\"ds-etapas\"><button class=\"ds-pipe activo\">Por contactar<b>12</b></button><button class=\"ds-pipe seg\">Toca seguimiento<b>3</b></button><button class=\"ds-pipe\">En curso<b>16</b></button></nav>",
+      "css": ".ds-etapas { display: flex; gap: 28px; align-items: center; min-height: 48px; border-bottom: 2px solid #1A1833; background: #FBFAFF; } .ds-pipe { all: unset; cursor: pointer; font: 600 15px 'Instrument Sans', system-ui, sans-serif; color: #55526E; padding: 12px 0 10px; border-bottom: 3px solid transparent; margin-bottom: -2px; } .ds-pipe b { font: 700 15px 'Outfit', system-ui, sans-serif; margin-left: 6px; font-variant-numeric: tabular-nums; } .ds-pipe:hover { color: #1A1833; } .ds-pipe.activo { color: #1A1833; border-bottom-color: #6430FA; } .ds-pipe.seg { color: #A15C00; } .ds-pipe.seg b { background: #A15C00; color: #fff; border-radius: 999px; padding: 0 7px; font-size: 13px; } .ds-pipe:focus-visible { outline: 2.5px solid #6430FA; outline-offset: 2px; }"
+    },
+    {
+      "name": "Renglón de cuenta",
+      "kind": "custom",
+      "refersTo": "lead-row",
+      "description": "Renglón de 72px sobre la cuadrícula: prioridad, nombre, situación web como marca y acciones.",
+      "html": "<div class=\"ds-hoja\"><div class=\"ds-lead\"><span class=\"ds-prio\">89</span><div><div class=\"ds-nom\"><i class=\"ds-nuevo\"></i>Clínica Dental Ejemplo</div><div class=\"ds-sub\">Clínica dental · Av. Ejemplo 123</div></div><span class=\"ds-web\">Sin web</span><button class=\"ds-mini\">Maps</button></div></div>",
+      "css": ".ds-hoja { background-color: #FBFAFF; background-image: linear-gradient(#E2DDF5 1px, transparent 1px), linear-gradient(90deg, #E2DDF5 1px, transparent 1px); background-size: 24px 24px; background-position: -1px -1px; padding-top: 24px; } .ds-lead { display: grid; grid-template-columns: 72px minmax(0,1fr) 120px auto; gap: 0 16px; align-items: center; height: 72px; padding: 0 8px; border-bottom: 1px solid #E2DDF5; color: #1A1833; font-family: 'Instrument Sans', system-ui, sans-serif; cursor: pointer; transition: background-color .12s; } .ds-lead:hover { background: rgba(255,255,255,.75); } .ds-prio { font: 700 30px/1 'Outfit', system-ui, sans-serif; letter-spacing: -.03em; color: #6430FA; font-variant-numeric: tabular-nums; } .ds-nom { font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-nuevo { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #02C5EF; margin-right: 8px; vertical-align: middle; } .ds-sub { color: #55526E; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-web { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; } .ds-web::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #6430FA; } .ds-mini { font: 600 13px 'Instrument Sans', system-ui, sans-serif; padding: 6px 11px; border-radius: 8px; border: 1.5px solid #1A1833; background: #fff; color: #1A1833; cursor: pointer; } .ds-mini:hover { background: #EFEBFF; } .ds-mini:focus-visible { outline: 2.5px solid #6430FA; outline-offset: 2px; }"
+    },
+    {
+      "name": "Cuenta en foco",
+      "kind": "custom",
+      "refersTo": "lead-focus",
+      "description": "La cuenta que toca abrir primero: 144px, marco morado, número display y WhatsApp lleno.",
+      "html": "<div class=\"ds-foco\"><span class=\"ds-foco-prio\">92</span><div class=\"ds-foco-nom\">Clínica Odontológica Ejemplo</div><button class=\"ds-foco-wa\">WhatsApp</button><p class=\"ds-foco-porque\"><b>Escríbele primero.</b>Sin web · 420 reseñas · nota 5 · tiene WhatsApp</p></div>",
+      "css": ".ds-foco { display: grid; grid-template-columns: 104px minmax(0,1fr) auto; grid-template-rows: auto auto; align-content: center; gap: 4px 24px; height: 144px; padding: 0 24px; background: #fff; border: 2px solid #6430FA; box-shadow: 0 14px 30px -22px rgba(74,31,209,.55); font-family: 'Instrument Sans', system-ui, sans-serif; color: #1A1833; } .ds-foco-prio { grid-row: 1 / span 2; font: 800 64px/1 'Outfit', system-ui, sans-serif; letter-spacing: -.04em; color: #6430FA; font-variant-numeric: tabular-nums; } .ds-foco-nom { font: 700 25px/1.15 'Outfit', system-ui, sans-serif; letter-spacing: -.01em; align-self: end; } .ds-foco-wa { grid-column: 3; grid-row: 1; align-self: end; font: 600 15px 'Instrument Sans', system-ui, sans-serif; padding: 11px 18px; border-radius: 10px; border: 1.5px solid #15803d; background: #15803d; color: #fff; cursor: pointer; } .ds-foco-wa:hover { background: #166534; border-color: #166534; } .ds-foco-wa:focus-visible { outline: 2.5px solid #6430FA; outline-offset: 2px; } .ds-foco-porque { grid-column: 2; grid-row: 2; margin: 0; font-size: 14px; } .ds-foco-porque b { color: #4A1FD1; margin-right: 6px; }"
+    },
+    {
+      "name": "Palotes del día",
+      "kind": "custom",
+      "refersTo": "palotes",
+      "description": "Firma: el límite diario en grupos de cinco trazos; el grupo completo se tacha.",
+      "html": "<div class=\"ds-dia\"><div class=\"ds-dia-txt\">Hoy · 7 de 25 mensajes</div><div class=\"ds-palotes\" role=\"img\" aria-label=\"7 de 25 mensajes enviados hoy\"><span class=\"ds-grupo completo\"><i class=\"h\"></i><i class=\"h\"></i><i class=\"h\"></i><i class=\"h\"></i><i class=\"h\"></i></span><span class=\"ds-grupo\"><i class=\"h\"></i><i class=\"h\"></i><i></i><i></i><i></i></span><span class=\"ds-grupo\"><i></i><i></i><i></i><i></i><i></i></span></div></div>",
+      "css": ".ds-dia { text-align: right; } .ds-dia-txt { font: 600 13px 'Instrument Sans', system-ui, sans-serif; color: #55526E; font-variant-numeric: tabular-nums; } .ds-palotes { display: flex; gap: 14px; justify-content: flex-end; margin-top: 6px; height: 30px; align-items: center; } .ds-grupo { position: relative; display: flex; gap: 4px; height: 28px; } .ds-grupo i { width: 3px; height: 28px; border-radius: 2px; background: rgba(85,82,110,.32); } .ds-grupo i.h { background: #6430FA; } .ds-grupo.completo::after { content: ''; position: absolute; left: -5px; right: -5px; top: 12px; height: 3px; border-radius: 2px; background: #6430FA; transform: rotate(-22deg); }"
+    },
+    {
+      "name": "Marcas de estado",
+      "kind": "chip",
+      "refersTo": "estado-linea",
+      "description": "Estados del contacto como marcas de libreta, no pastillas.",
+      "html": "<div class=\"ds-est c\">Contactado hace 2 días</div><div class=\"ds-est s\">Toca seguimiento</div><div class=\"ds-est r\">Respondió</div><div class=\"ds-est x\">Perdido</div>",
+      "css": ".ds-est { font: 600 12.5px 'Instrument Sans', system-ui, sans-serif; margin: 4px 0; } .ds-est::before { content: ''; display: inline-block; vertical-align: middle; margin: -2px 7px 0 0; box-sizing: border-box; } .ds-est.c { color: #4A1FD1; } .ds-est.c::before { width: 3px; height: 13px; border-radius: 2px; background: #6430FA; } .ds-est.s { color: #A15C00; } .ds-est.s::before { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #A15C00; } .ds-est.r { color: #15803d; } .ds-est.r::before { width: 10px; height: 10px; border-radius: 50%; background: #15803d; } .ds-est.x { color: #55526E; font-weight: 500; } .ds-est.x::before { width: 12px; height: 2px; background: #55526E; }"
+    },
+    {
+      "name": "Riel",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "Navegación principal sobre morado sólido; en celular, barra inferior.",
+      "html": "<nav class=\"ds-riel\"><button><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-4-4\"/></svg>Buscar</button><button class=\"activo\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z\"/><path d=\"M9 8h6M9 12h6M9 16h3\"/></svg>Leads<span class=\"n\">60</span></button></nav>",
+      "css": ".ds-riel { width: 224px; background: #6430FA; padding: 12px; display: flex; flex-direction: column; gap: 2px; } .ds-riel button { display: flex; align-items: center; gap: 10px; background: none; border: 0; font: 500 15px 'Instrument Sans', system-ui, sans-serif; color: #E4DCFF; padding: 10px 12px; border-radius: 9px; cursor: pointer; text-align: left; } .ds-riel svg { width: 18px; height: 18px; flex: none; } .ds-riel button:hover { color: #fff; background: rgba(255,255,255,.08); } .ds-riel button.activo { color: #fff; background: #4A1FD1; font-weight: 600; } .ds-riel button:focus-visible { outline: 2.5px solid #fff; outline-offset: 2px; } .ds-riel .n { margin-left: auto; font: 600 12px 'Instrument Sans', system-ui, sans-serif; color: #4A1FD1; background: #fff; border-radius: 999px; padding: 0 7px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "La libreta del almacén",
+    "overview": "Cada negocio es una cuenta abierta en el cuaderno de fiado: se anota, se le hace seguimiento a tiempo y se tacha cuando se cierra. La pantalla de trabajo es una hoja cuadriculada lila con un margen cian, escrita en tinta oscura y morado KaiKira, junto a un riel morado sólido que lleva el logo KK, la navegación y los conteos. La hoja no es decoración: su cuadrícula de 24px es la grilla real de la lista, y cada renglón cae exactamente sobre sus líneas.\n\nLa densidad es la de una herramienta de uso diario: renglones de una línea por dato, cifras tabulares, nada que compita con la pregunta \"¿a quién le escribo ahora?\". La jerarquía la dan el número de prioridad en Outfit a escala de display, la cuenta enmarcada que toca abrir primero y los palotes del día. Los estados se escriben como marcas de libreta (palito, círculo, punto, raya, tachado), no como pastillas de color.\n\nRechaza el CRM SaaS genérico de tarjetas blancas, pastillas pastel y fondo gris.",
+    "keyCharacteristics": [
+      "Hoja cuadriculada de 24px (`linea` sobre `papel`) que es la grilla de la lista; margen cian de 2px.",
+      "Riel morado sólido a la izquierda; en celular pasa a barra inferior.",
+      "Prioridad en números Outfit grandes y tabulares, coloreados por banda.",
+      "Renglones de 72px (3 celdas); la cuenta en foco mide 144px (6 celdas) y lleva marco morado.",
+      "El límite diario se dibuja en palotes de cinco, tachados al completar el grupo.",
+      "Estados como marcas tipográficas, nunca como pastillas pastel."
+    ],
+    "rules": [
+      { "name": "La Regla del Cian que Marca", "body": "El cian dibuja el margen y puntos de 8 a 9px. Nunca es fondo, texto ni relleno de botón.", "section": "colors" },
+      { "name": "La Regla del Verde Único", "body": "El verde lleno se reserva para la acción de WhatsApp de la cuenta en foco y para los botones de WhatsApp fuera de la lista. En los renglones comunes, WhatsApp va con contorno verde sobre blanco.", "section": "colors" },
+      { "name": "La Regla del Número que Manda", "body": "La prioridad es el elemento más grande del renglón y su color dice la banda: morado alta (≥75), tinta media (50 a 74), tinta gastada baja (<50, peso 600).", "section": "typography" },
+      { "name": "La Regla del Renglón de Una Línea", "body": "Cada dato ocupa una línea y lo largo se corta con \"…\"; el texto completo vive en el detalle y en el `title`. Solo el nombre de la cuenta en foco puede bajar a 2 líneas (3 en celular).", "section": "typography" },
+      { "name": "La Regla de las Celdas", "body": "Toda altura de la lista es múltiplo de 24px: renglón 72px, foco 144px, separación bajo el foco 24px.", "section": "layout" },
+      { "name": "La Regla de la Hoja Plana", "body": "Nada sobre la lista flota salvo la cuenta en foco. Los renglones nunca llevan sombra ni fondo propio en reposo; el hover solo aclara el papel (`rgba(255,255,255,.75)`).", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** alinear toda altura de la lista a la celda de 24px (renglón 72px, foco 144px).",
+      "**Do** escribir los estados como marcas de libreta (palito, círculo, anillo, raya, tachado) seguidas de texto 600.",
+      "**Do** dar a la prioridad el mayor tamaño del renglón, en Outfit tabular, coloreada por banda.",
+      "**Do** reservar el marco morado y la sombra teñida para una sola cuenta en foco.",
+      "**Do** usar el cian solo para el margen y los puntos de marca.",
+      "**Do** mostrar el límite diario en palotes de cinco con su texto \"Hoy · N de 25\".",
+      "**Do** usar iconos SVG de trazo inline (`currentColor`, trazo 2px).",
+      "**Do** quitar animaciones y desplazamientos con movimiento reducido."
+    ],
+    "donts": [
+      "**Don't** usar pastillas pastel para estados ni situación web; las pastillas sólidas quedan solo para contadores.",
+      "**Don't** poner tarjetas redondeadas flotantes en la lista; los renglones son líneas a escuadra.",
+      "**Don't** usar fondo gris ni quitar la cuadrícula de la hoja de trabajo.",
+      "**Don't** rellenar botones de renglón con verde; el verde lleno es de la cuenta en foco.",
+      "**Don't** usar colores fuera de la paleta KaiKira para nuevas superficies.",
+      "**Don't** usar emoji como iconos ni rótulos."
+    ]
+  }
+}

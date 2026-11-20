@@ -2,34 +2,35 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ClientFind</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <header class="top">
     <div class="marca">
-      <span class="logo">📡</span>
+      <img class="logo" src="/img/logo-kk.png" alt="KaiKira TI">
       <div>
         <h1>ClientFind</h1>
-        <p id="sub-marca">Negocios que necesitan una página web</p>
+        <p id="sub-marca">de KaiKira TI</p>
       </div>
     </div>
     <div class="chips-top" id="chips-top"></div>
   </header>
 
-  <nav class="tabs" id="tabs">
-    <button data-tab="buscar">🔎 Buscar</button>
-    <button data-tab="leads">📋 Leads <span class="cuenta" id="cuenta-leads"></span></button>
-    <button data-tab="resultados">📊 Resultados</button>
-    <button data-tab="automaticas">⏰ Búsquedas automáticas</button>
-    <button data-tab="config">⚙️ Configuración</button>
+  <nav class="tabs" id="tabs" aria-label="Secciones">
+    <button data-tab="buscar"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>Buscar</span></button>
+    <button data-tab="leads"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 3h12a2 2 0 0 1 2 2v16H7a2 2 0 0 1-2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span>Leads</span><span class="cuenta" id="cuenta-leads"></span></button>
+    <button data-tab="resultados"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"/></svg><span>Resultados</span></button>
+    <button data-tab="automaticas"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg><span class="lbl-largo">Búsquedas automáticas</span><span class="lbl-corto">Automáticas</span></button>
+    <button data-tab="config"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span class="lbl-largo">Configuración</span><span class="lbl-corto">Ajustes</span></button>
   </nav>
 
-  <div id="aviso-demo" class="aviso" hidden></div>
-
   <main>
+    <div id="aviso-demo" class="aviso" hidden></div>
     <!-- BUSCAR -->
     <section id="vista-buscar" class="vista" hidden>
       <div class="panel buscar">
@@ -66,11 +67,17 @@
     </section>
 
     <!-- LEADS -->
-    <section id="vista-leads" class="vista" hidden>
-      <div class="pipeline" id="pipeline"></div>
+    <section id="vista-leads" class="vista" aria-labelledby="titulo-leads" hidden>
+      <div class="cab-hoja">
+        <h2 id="titulo-leads">Por contactar</h2>
+        <div class="dia" id="dia"></div>
+      </div>
+      <div class="pipeline" id="pipeline" role="group" aria-label="Etapa"></div>
       <div class="filtros">
-        <input id="f-texto" type="search" placeholder="Buscar por nombre, dirección, nota…">
-        <select id="f-categoria">
+        <input id="f-texto" type="search" placeholder="Buscar por nombre, dirección, nota…" aria-label="Buscar leads">
+        <button type="button" class="btn btn-filtros" id="btn-filtros" aria-expanded="false" aria-controls="filtros-extra">Filtros<span class="n-filtros" id="n-filtros" hidden></span></button>
+        <div class="filtros-extra" id="filtros-extra">
+        <select id="f-categoria" aria-label="Situación web">
           <option value="oportunidades">Solo oportunidades</option>
           <option value="todas">Toda situación web</option>
           <option value="sin_web">Sin web</option>
@@ -80,10 +87,9 @@
           <option value="mejorable">Web mejorable</option>
           <option value="ok">Web OK</option>
           <option value="no_verificable">Revisar a mano</option>
-          <option value="pendiente">Analizando…</option>
         </select>
-        <select id="f-busqueda"><option value="">Todas las búsquedas</option></select>
-        <select id="f-orden">
+        <select id="f-busqueda" aria-label="Búsqueda"><option value="">Todas las búsquedas</option></select>
+        <select id="f-orden" aria-label="Orden">
           <option value="prioridad">Ordenar: prioridad</option>
           <option value="resenas">Ordenar: más reseñas</option>
           <option value="rating">Ordenar: mejor rating</option>
@@ -91,8 +97,10 @@
           <option value="nombre">Ordenar: nombre</option>
         </select>
         <label class="check"><input type="checkbox" id="f-wa"> Solo con WhatsApp</label>
-        <a class="btn" href="/api/export.csv">⬇️ Exportar a Excel (CSV)</a>
+        <a class="btn" href="/api/export.csv">Exportar a Excel (CSV)</a>
+        </div>
       </div>
+      <div id="resumen-lista" class="resumen-lista" aria-live="polite"></div>
       <div id="lista-leads" class="lista"></div>
     </section>
 
@@ -178,7 +186,7 @@
         <div class="panel">
           <h2>Plantillas de mensaje</h2>
           <p class="muted">La app elige sola la plantilla según la situación web de cada negocio. Si escribes una <b>versión B</b>, la mitad de los negocios recibe la A y la otra mitad la B, y en 📊 Resultados ves cuál responde más.</p>
-          <p class="muted">Variables: <code>{nombre}</code> <code>{problema}</code> <code>{plataforma}</code> <code>{reputacion}</code> <code>{en_comuna}</code> <code>{comuna}</code> <code>{rubro}</code> <code>{rating}</code> <code>{resenas}</code> <code>{mi_nombre}</code> <code>{mi_negocio}</code> <code>{mi_instagram}</code></p>
+          <p class="muted">Variables: <code>{nombre}</code> <code>{problema}</code> <code>{plataforma}</code> <code>{reputacion}</code> <code>{cuando}</code> <code>{en_comuna}</code> <code>{comuna}</code> <code>{rubro}</code> <code>{rating}</code> <code>{resenas}</code> <code>{mi_nombre}</code> <code>{mi_negocio}</code> <code>{mi_instagram}</code></p>
           <div id="editor-plantillas"></div>
           <button type="button" class="btn" id="btn-tpl-reset">Restaurar plantillas originales</button>
         </div>
@@ -204,9 +212,9 @@
 
   <!-- Panel lateral de detalle -->
   <div id="fondo-drawer" class="fondo" hidden></div>
-  <aside id="drawer" class="drawer" hidden></aside>
+  <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-titulo" hidden></aside>
 
-  <div id="toasts"></div>
+  <div id="toasts" role="status" aria-live="polite"></div>
 
   <datalist id="lista-rubros"></datalist>
   <datalist id="lista-comunas"></datalist>

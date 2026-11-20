@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "instrument sans",
+        "createdAt": "2026-11-20T00:38:28.006Z",
+        "reason": "Fuente de marca de KaiKira TI (PRODUCT.md, Brand Commitments)"
+      },
+      {
+        "rule": "codex-grid-background",
+        "value": "*",
+        "files": [
+          "public/*"
+        ],
+        "createdAt": "2026-11-20T00:46:12.412Z",
+        "reason": "Material del mundo elegido: el cuadriculado es la grilla real de los renglones (contrato OWN-WORLD)"
+      }
+    ]
+  }
+}
