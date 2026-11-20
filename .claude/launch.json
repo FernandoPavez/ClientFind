@@ -5,6 +5,8 @@
       "name": "start",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
+        "--prefix",
+        "D:/Negocio_KaiKira/ClientFind",
         "run",
         "start"
       ],
