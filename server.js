@@ -6,13 +6,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { Store, flushAll, ROOT } from './lib/db.js';
-import { mergeConfig, mask } from './lib/config.js';
+import { mergeConfig, mask, PLANTILLAS_ANTERIORES } from './lib/config.js';
 import { textSearch, fetchPhoto } from './lib/places.js';
 import { analizarWeb, PLATAFORMA_POR_NOMBRE } from './lib/webcheck.js';
 import { calcularPrioridad, fraseProblema } from './lib/scoring.js';
 import { demoSearch } from './lib/demo.js';
 import { enviarTelegram, textoNuevosLeads } from './lib/notify.js';
 import { renderLanding } from './lib/preview.js';
+import { crearAuth } from './lib/auth.js';
+import crypto from 'node:crypto';
 
 const PORT = Number(process.env.PORT) || 3030;
 const ARGS = new Set(process.argv.slice(2));
@@ -23,7 +25,24 @@ const leadsStore = new Store('leads.json', { leads: {} });
 const searchesStore = new Store('busquedas.json', { busquedas: [] });
 const statsStore = new Store('uso.json', { meses: {} });
 
-const cfg = () => mergeConfig(configStore.data);
+// Modo en línea: se activa al definir la variable de entorno CLIENTFIND_PASSWORD (ej. en Hostinger)
+const ONLINE = !!process.env.CLIENTFIND_PASSWORD;
+if (ONLINE && process.env.CLIENTFIND_PASSWORD.length < 10) {
+  console.error('\n  ⚠️  CLIENTFIND_PASSWORD debe tener al menos 10 caracteres.\n');
+  process.exit(1);
+}
+const secretoStore = new Store('secreto.json', {});
+if (!secretoStore.data.valor) { secretoStore.data.valor = crypto.randomBytes(32).toString('hex'); secretoStore.flush(); }
+const auth = ONLINE ? crearAuth({ password: process.env.CLIENTFIND_PASSWORD, secreto: process.env.CLIENTFIND_SECRET || secretoStore.data.valor }) : null;
+
+const cfg = () => {
+  const c = mergeConfig(configStore.data);
+  if (process.env.GOOGLE_API_KEY) c.googleApiKey = process.env.GOOGLE_API_KEY;
+  return c;
+};
+
+// El nombre por defecto de versiones anteriores era un error: se corrige
+if (configStore.data.miNombre === 'Catalina') { configStore.data.miNombre = 'Fernando'; configStore.save(); }
 const modoDemo = () => ARGS.has('--demo') || cfg().demo || !cfg().googleApiKey;
 
 const hoyLocal = (d = new Date()) => d.toLocaleDateString('sv-SE'); // YYYY-MM-DD en hora local
@@ -83,6 +102,17 @@ async function analizarLead(id, { conPagespeed } = {}) {
   leadsStore.save();
   return actual;
 }
+
+// Migración: plantillas guardadas que siguen siendo las originales de una versión anterior → usar las nuevas
+(function migrarPlantillas() {
+  const norm = (t) => String(t || '').replace(/\r\n/g, '\n').trim();
+  const viejas = new Set(PLANTILLAS_ANTERIORES.map(norm));
+  const p = configStore.data.plantillas;
+  if (!p) return;
+  let n = 0;
+  for (const k of Object.keys(p)) if (viejas.has(norm(p[k]))) { delete p[k]; n++; }
+  if (n) { configStore.save(); console.log(`  ↻ ${n} plantilla(s) actualizadas al nuevo texto`); }
+})();
 
 // Migración: leads guardados antes de existir la categoría "plataforma"
 (function migrar() {
@@ -239,7 +269,7 @@ function estadisticas() {
 }
 
 // ---------- HTTP ----------
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.woff2': 'font/woff2' };
+const MIME = { '.webmanifest': 'application/manifest+json', '.json': 'application/json', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.woff2': 'font/woff2' };
 const PUBLIC = path.join(ROOT, 'public');
 
 function enviar(res, status, data, headers = {}) {
@@ -248,11 +278,11 @@ function enviar(res, status, data, headers = {}) {
   res.end(body);
 }
 
-function leerCuerpo(req) {
+function leerCuerpo(req, limite = 2e6) {
   return new Promise((resolve, reject) => {
     let size = 0;
     const chunks = [];
-    req.on('data', (c) => { size += c.length; if (size > 2e6) { reject(new Error('Cuerpo demasiado grande')); req.destroy(); } else chunks.push(c); });
+    req.on('data', (c) => { size += c.length; if (size > limite) { reject(new Error('Cuerpo demasiado grande')); req.destroy(); } else chunks.push(c); });
     req.on('end', () => {
       if (!chunks.length) return resolve({});
       try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))); } catch { reject(new Error('JSON inválido')); }
@@ -263,7 +293,7 @@ function leerCuerpo(req) {
 
 function configPublica() {
   const c = cfg();
-  return { ...c, googleApiKey: mask(c.googleApiKey), telegramToken: mask(c.telegramToken), tieneApiKey: !!c.googleApiKey, tieneTelegram: !!(c.telegramToken && c.telegramChatId), modoDemo: modoDemo(), demoForzado: ARGS.has('--demo') };
+  return { ...c, googleApiKey: mask(c.googleApiKey), telegramToken: mask(c.telegramToken), tieneApiKey: !!c.googleApiKey, apiKeyEnServidor: !!process.env.GOOGLE_API_KEY, tieneTelegram: !!(c.telegramToken && c.telegramChatId), modoDemo: modoDemo(), demoForzado: ARGS.has('--demo'), online: ONLINE };
 }
 
 const CAMPOS_CONFIG = ['googleApiKey', 'demo', 'miNombre', 'miNegocio', 'miInstagram', 'miWhatsapp', 'regionCode', 'ciudadPorDefecto', 'maxResultados', 'limiteMensualBusquedas', 'limiteMensualFotos', 'limiteDiario', 'diasSeguimiento', 'pagespeedAuto', 'telegramToken', 'telegramChatId', 'prioridadMinimaAviso', 'plantillas'];
@@ -289,6 +319,38 @@ async function manejar(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const p = url.pathname;
   const m = req.method;
+
+  // --- Respaldo: descargar e importar todos los datos ---
+  if (p === '/api/respaldo' && m === 'GET') {
+    const { googleApiKey, telegramToken, ...configSinSecretos } = configStore.data;
+    const respaldo = { app: 'ClientFind', version: 1, exportado: new Date().toISOString(), leads: leadsStore.data.leads, busquedas: searchesStore.data.busquedas, uso: statsStore.data.meses, config: configSinSecretos };
+    return enviar(res, 200, JSON.stringify(respaldo), { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': `attachment; filename="clientfind-respaldo-${hoyLocal()}.json"` });
+  }
+  if (p === '/api/respaldo' && m === 'POST') {
+    const body = await leerCuerpo(req, 40e6);
+    const r = body.respaldo;
+    if (!r || r.app !== 'ClientFind' || typeof r.leads !== 'object' || !Array.isArray(r.busquedas)) return enviar(res, 400, { error: 'El archivo no es un respaldo de ClientFind.' });
+    const reemplazar = body.modo === 'reemplazar';
+    let leadsNuevos = 0;
+    if (reemplazar) { leadsStore.data.leads = r.leads; leadsNuevos = Object.keys(r.leads).length; }
+    else for (const [id, l] of Object.entries(r.leads)) if (!leadsStore.data.leads[id]) { leadsStore.data.leads[id] = l; leadsNuevos++; }
+    if (reemplazar) searchesStore.data.busquedas = r.busquedas;
+    else for (const b of r.busquedas) if (!searchesStore.data.busquedas.some((x) => x.id === b.id)) searchesStore.data.busquedas.push(b);
+    for (const [mes, uso] of Object.entries(r.uso || {})) {
+      const actual = (statsStore.data.meses[mes] ||= {});
+      for (const [k, v] of Object.entries(uso)) actual[k] = Math.max(actual[k] || 0, Number(v) || 0);
+    }
+    if (r.config && typeof r.config === 'object') {
+      const { googleApiKey, telegramToken, ...resto } = r.config;
+      if (reemplazar || !configStore.data.plantillas) Object.assign(configStore.data, resto);
+    }
+    leadsStore.save(); searchesStore.save(); statsStore.save(); configStore.save();
+    return enviar(res, 200, { ok: true, leadsNuevos, total: Object.keys(leadsStore.data.leads).length });
+  }
+
+  if (p === '/api/logout' && m === 'POST') {
+    return enviar(res, 200, { ok: true }, { 'Set-Cookie': auth ? auth.cookieCerrar(esHttps(req)) : '' });
+  }
 
   // --- API ---
   if (p === '/api/config' && m === 'GET') return enviar(res, 200, configPublica());
@@ -350,6 +412,12 @@ async function manejar(req, res) {
         lead.estado = body.estado;
         if (['respondio', 'reunion', 'ganado', 'no_contactar'].includes(body.estado) && lead.contactos && !lead.respondio) lead.respondio = ahora;
         if (['nuevo', 'contactado'].includes(body.estado)) delete lead.respondio;
+        if (body.estado === 'nuevo' && lead.contactos) {
+          // Volver a "Nuevo" anula los contactos: el próximo mensaje vuelve a ser el de primer contacto
+          for (const h of lead.historial) if (h.tipo === 'contacto') { h.tipo = 'contacto_anulado'; h.accion += ' (anulado)'; }
+          lead.contactos = 0;
+          delete lead.ultimoContacto; delete lead.plantillaUsada; delete lead.primerContactoFecha;
+        }
         if (body.estado === 'ganado') lead.ganado = ahora; else delete lead.ganado;
       }
       if (typeof body.notas === 'string') lead.notas = body.notas.slice(0, 5000);
@@ -468,20 +536,74 @@ async function manejar(req, res) {
   return enviar(res, 404, { error: 'No encontrado' });
 }
 
+const esHttps = (req) => req.headers['x-forwarded-proto'] === 'https' || !!req.socket.encrypted;
+const ipDe = (req) => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '?';
+const PUBLICOS = new Set(['/login', '/login.html', '/styles.css', '/manifest.webmanifest', '/icono-192.png', '/icono-512.png', '/apple-touch-icon.png']);
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function puerta(req, res) {
+  const url = new URL(req.url, 'http://x');
+  const p = url.pathname;
+
+  if (!ONLINE) {
+    // Modo local: solo peticiones del propio computador
+    const host = (req.headers.host || '').split(':')[0];
+    if (!['localhost', '127.0.0.1', '[::1]'].includes(host)) return enviar(res, 403, 'Solo acceso local');
+    return manejar(req, res);
+  }
+
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'same-origin');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  if (esHttps(req)) res.setHeader('Strict-Transport-Security', 'max-age=15552000');
+
+  // Bloquea peticiones que modifican datos si vienen desde otro sitio
+  if (!['GET', 'HEAD'].includes(req.method)) {
+    const origen = req.headers.origin;
+    if (origen) {
+      let hostOrigen = '';
+      try { hostOrigen = new URL(origen).host; } catch {}
+      if (hostOrigen !== req.headers.host) return enviar(res, 403, { error: 'Origen no permitido' });
+    }
+  }
+
+  if (p === '/api/login' && req.method === 'POST') {
+    const ip = ipDe(req);
+    if (auth.bloqueado(ip)) return enviar(res, 429, { error: 'Demasiados intentos. Espera 15 minutos.' });
+    const body = await leerCuerpo(req, 10e3).catch(() => ({}));
+    if (!auth.claveCorrecta(body.password)) {
+      auth.registrarFallo(ip);
+      await esperar(700);
+      return enviar(res, 401, { error: 'Contraseña incorrecta.' });
+    }
+    auth.registrarExito(ip);
+    return enviar(res, 200, { ok: true }, { 'Set-Cookie': auth.cookieSesion(esHttps(req)) });
+  }
+
+  if (p === '/login') {
+    if (auth.sesionValida(req)) { res.writeHead(302, { Location: '/' }); return res.end(); }
+    req.url = '/login.html';
+    return manejar(req, res);
+  }
+  if (PUBLICOS.has(p) || auth.sesionValida(req)) return manejar(req, res);
+
+  if (p.startsWith('/api/')) return enviar(res, 401, { error: 'Tu sesión expiró. Vuelve a entrar.', login: true });
+  res.writeHead(302, { Location: '/login' });
+  return res.end();
+}
+
 const server = http.createServer((req, res) => {
-  // Solo aceptamos peticiones del propio computador
-  const host = (req.headers.host || '').split(':')[0];
-  if (!['localhost', '127.0.0.1', '[::1]'].includes(host)) return enviar(res, 403, 'Solo acceso local');
-  manejar(req, res).catch((e) => {
+  puerta(req, res).catch((e) => {
     console.error(e);
     if (!res.headersSent) enviar(res, 500, { error: e.message || 'Error interno' });
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, ONLINE ? '0.0.0.0' : '127.0.0.1', () => {
   const url = `http://localhost:${PORT}`;
-  console.log(`\n  📡 ClientFind funcionando en ${url}`);
-  console.log(modoDemo() ? '  🧪 Modo DEMO (datos ficticios). Agrega tu API key en Configuración para buscar de verdad.\n' : '  ✅ Conectado a Google Places.\n');
+  console.log(`\n  📡 ClientFind funcionando en ${ONLINE ? `el puerto ${PORT} (modo en línea, con contraseña)` : url}`);
+  console.log(modoDemo() ? '  🧪 Modo DEMO (datos ficticios). Agrega tu API key para buscar de verdad.\n' : '  ✅ Conectado a Google Places.\n');
+  if (ONLINE) return;
   console.log('  Deja esta ventana abierta mientras uses la app. Para cerrar: Ctrl + C\n');
   if (!ARGS.has('--no-abrir')) {
     const cmd = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];

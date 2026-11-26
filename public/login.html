@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Entrar · ClientFind</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/icono-192.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#6430FA">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body { min-height: 100vh; display: grid; grid-template-columns: 1fr; grid-template-rows: 1fr; place-items: center; padding: 20px; }
+    .caja { width: min(380px, 100%); background: var(--panel); border: 1px solid var(--borde); border-radius: 18px; padding: 30px 26px; box-shadow: 0 24px 48px -32px rgba(26,24,51,.45); }
+    .caja img { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 14px; }
+    .caja h1 { font-family: var(--titulo); }
+    .caja h1 { font-size: 22px; }
+    .caja p { color: var(--m); margin: 4px 0 18px; }
+    .caja .btn { width: 100%; margin-top: 16px; padding: 13px; font-size: 16px; }
+    .error { color: var(--rojo); font-size: 14px; min-height: 1.4em; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <form class="caja" id="f">
+    <img src="/icono-192.png" alt="">
+    <h1>ClientFind</h1>
+    <p>Ingresa tu contraseña para continuar.</p>
+    <label>Contraseña
+      <input type="password" name="password" autocomplete="current-password" required autofocus>
+    </label>
+    <button class="btn primario" type="submit">Entrar</button>
+    <div class="error" id="err" role="alert"></div>
+  </form>
+  <script>
+    document.getElementById('f').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const err = document.getElementById('err');
+      btn.disabled = true; err.textContent = '';
+      try {
+        const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: e.target.password.value }) });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok) { location.href = '/'; return; }
+        err.textContent = d.error || 'No se pudo entrar.';
+      } catch { err.textContent = 'Sin conexión. Revisa tu internet.'; }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>

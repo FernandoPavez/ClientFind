@@ -32,6 +32,7 @@ Me di cuenta de que en Google Maps hay muchos negocios con **cientos de reseñas
 | 🎨 | **Generador de maquetas**: crea una landing de muestra con el nombre, rating, horarios, fotos y ubicación del negocio, adaptada a su rubro. |
 | 📋 | **Mini CRM**: estados (Nuevo → Contactado → Respondió → Reunión → Cliente), notas, historial, recordatorio de seguimiento y límite diario de contactos. |
 | 📊 | **Panel de resultados**: tasa de respuesta, reuniones y clientes por mensaje, rubro, comuna y tipo de web. |
+| 📱 | **Uso desde el celular**: modo en línea con contraseña, navegación inferior tipo app e instalable en la pantalla de inicio. |
 | ⏰ | **Búsquedas automáticas** programadas, con avisos por **Telegram** cuando aparecen leads nuevos. |
 | 💰 | **Tope de costo**: un límite mensual de llamadas mantiene el uso dentro del tramo gratuito de Google. |
 
@@ -76,7 +77,7 @@ Cada problema tiene un peso, y su suma determina si la web se considera "mejorab
 ## 🧠 Decisiones técnicas
 
 - **Cero dependencias.** Solo Node.js (`http`, `fetch`, `fs`) y JavaScript vanilla en el frontend. Se instala descomprimiendo y se ejecuta con doble clic, sin `npm install`.
-- **Local-first por seguridad.** La API key nunca llega al navegador: el servidor local hace todas las llamadas a Google y solo acepta conexiones desde `localhost`. Las fotos de Google pasan por un proxy del servidor por la misma razón.
+- **Seguridad.** La API key nunca llega al navegador: el servidor hace todas las llamadas a Google, y las fotos pasan por un proxy. En modo local solo acepta conexiones desde `localhost`. En modo en línea exige contraseña (cookie firmada con HMAC, `HttpOnly` y `SameSite`), limita los intentos fallidos y rechaza peticiones de otros orígenes.
 - **Control de costos.** Usa *field masks* para pedir solo los campos necesarios. Un contador mensual detiene la app antes de salir del tramo gratuito de Google (1.000 llamadas al mes), y las búsquedas repetidas no vuelven a analizar webs revisadas hace menos de 30 días.
 - **Análisis concurrente.** Una cola con límite de concurrencia (5) revisa las webs en segundo plano mientras la interfaz consulta el avance.
 - **A/B testing determinista.** La versión del mensaje se asigna con un hash del ID del negocio, así que cada negocio recibe siempre la misma versión y la comparación es justa.
@@ -105,6 +106,7 @@ ClientFind/
 │   ├── preview.js     # Generador de maquetas por rubro
 │   ├── notify.js      # Avisos por Telegram
 │   ├── config.js      # Configuración y plantillas de mensajes
+│   ├── auth.js        # Inicio de sesión del modo en línea
 │   ├── db.js          # Persistencia JSON con escritura atómica
 │   └── demo.js        # Datos ficticios para el modo demo
 ├── public/            # Interfaz (index.html, app.js, styles.css)
@@ -124,6 +126,8 @@ node server.js --demo
 Se abre en `http://localhost:3030` con datos ficticios, sin necesidad de API key. En Windows también puedes hacer doble clic en `iniciar-windows.bat`.
 
 Para usarla con datos reales, sigue la guía: **[docs/INSTALACION.md](docs/INSTALACION.md)** (cómo crear la API key, costos, Telegram y flujo de trabajo).
+
+Para usarla desde el celular, publícala en un hosting Node.js con contraseña: **[docs/PUBLICAR-EN-HOSTINGER.md](docs/PUBLICAR-EN-HOSTINGER.md)**.
 
 ## 🤝 Uso responsable
 

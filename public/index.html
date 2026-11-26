@@ -7,6 +7,12 @@
   <link rel="icon" href="/img/favicon.png">
   <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/instrument-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#6430FA">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ClientFind">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -134,6 +140,7 @@
           <h2>Google</h2>
           <label>API key de Google Cloud
             <input name="googleApiKey" placeholder="AIza…" autocomplete="off">
+            <small id="nota-apikey" hidden>Definida en el servidor (variable GOOGLE_API_KEY). Para cambiarla, edítala en Hostinger.</small>
             <small>Necesita activadas <b>Places API (New)</b> y (opcional) <b>PageSpeed Insights API</b>. Se guarda solo en tu computador. Pasos en docs/INSTALACION.md.</small>
           </label>
           <div class="form-grid">
@@ -200,6 +207,23 @@
             <label>Avisar desde prioridad <input name="prioridadMinimaAviso" type="number" min="0" max="100"></label>
           </div>
           <button type="button" class="btn" id="btn-telegram">Enviar mensaje de prueba</button>
+        </div>
+
+        <div class="panel">
+          <h2>Respaldo de tus datos</h2>
+          <p class="muted">Descarga todos tus leads, búsquedas y plantillas en un archivo. Sirve para no perder nada y para pasar tus datos del computador a la versión en línea (o al revés). La API key no se incluye.</p>
+          <div class="botones-fila">
+            <a class="btn" href="/api/respaldo">⬇️ Descargar respaldo</a>
+            <label class="btn" for="archivo-respaldo">⬆️ Importar respaldo</label>
+            <input type="file" id="archivo-respaldo" accept="application/json,.json" hidden>
+          </div>
+          <p class="muted" style="font-size:13px">Al importar, los leads que ya tienes se mantienen y se agregan los que falten.</p>
+        </div>
+
+        <div class="panel" id="panel-sesion" hidden>
+          <h2>Sesión</h2>
+          <p class="muted">Estás usando ClientFind en línea. Cierra sesión si entraste desde un equipo que no es tuyo.</p>
+          <button type="button" class="btn" id="btn-logout">Cerrar sesión</button>
         </div>
 
         <div class="barra-guardar">

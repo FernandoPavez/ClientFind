@@ -374,3 +374,6 @@ input.mini { width: 70px; margin: 0; padding: 5px 8px; }
   .drawer, .toast { animation: none; }
   .lead { transition: none; }
 }
+
+/* Botones en fila (respaldo en Configuración) */
+.botones-fila { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }

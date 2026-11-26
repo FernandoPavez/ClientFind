@@ -34,6 +34,7 @@ async function api(path, opts = {}) {
   if (init.body && typeof init.body !== 'string') init.body = JSON.stringify(init.body);
   const res = await fetch(path, init);
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && data.login) { location.href = '/login'; throw new Error(data.error); }
   if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
   return data;
 }
@@ -116,7 +117,7 @@ function variables(lead) {
     en_comuna: comuna ? ` en ${comuna}` : '',
     rating: fmtRating(lead.rating),
     resenas: lead.resenas || 0,
-    reputacion: buenaFama ? ` con ${fmtRating(lead.rating)}⭐ y ${lead.resenas} reseñas (¡felicitaciones!)` : '',
+    reputacion: buenaFama ? `, con ${fmtRating(lead.rating)} estrellas y ${lead.resenas} reseñas,` : '',
     // «ayer», «hace 4 días»: cuándo fue el último mensaje, para que el seguimiento no diga «hace unos días» si fue ayer
     cuando: lead.ultimoContacto ? haceDias(diasDesde(lead.ultimoContacto)) : 'hace unos días',
     problema: lead.webCheck?.frase || 'no tienen página web',
@@ -130,7 +131,15 @@ function mensaje(lead, key, version) {
   const p = S.config?.plantillas || {};
   const tpl = (version === 'B' ? p[`${key}_B`] : p[key]) || p.primerContacto || '';
   const v = variables(lead);
-  return { texto: tpl.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)), codigo: `${key}:${version}` };
+  const texto = tpl
+    .replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m))
+    .replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu, '') // sin emojis: no siempre llegan bien por WhatsApp Web
+    .replace(/[ \t]+([,.!?])/g, '$1')
+    .replace(/,\s*,/g, ',')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .trim();
+  return { texto, codigo: `${key}:${version}` };
 }
 
 // ---------- carga de datos ----------
@@ -711,6 +720,9 @@ function llenarConfig() {
     else if (el.name in c) el.value = c[el.name] ?? '';
   }
   f.elements.demo.disabled = !!c.demoForzado;
+  f.elements.googleApiKey.disabled = !!c.apiKeyEnServidor;
+  $('#nota-apikey').hidden = !c.apiKeyEnServidor;
+  $('#panel-sesion').hidden = !c.online;
 }
 
 async function guardarConfig(ev) {
@@ -878,6 +890,25 @@ $('#btn-tpl-reset').addEventListener('click', async () => {
   S.config = await api('/api/config', { method: 'POST', body: { resetPlantillas: true } });
   llenarConfig();
   toast('Plantillas restauradas');
+});
+$('#btn-logout').addEventListener('click', async () => {
+  await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+  location.href = '/login';
+});
+$('#archivo-respaldo').addEventListener('change', async (ev) => {
+  const archivo = ev.target.files[0];
+  ev.target.value = '';
+  if (!archivo) return;
+  try {
+    const respaldo = JSON.parse(await archivo.text());
+    const r = await api('/api/respaldo', { method: 'POST', body: { respaldo, modo: 'combinar' } });
+    await cargarTodo();
+    llenarConfig();
+    render();
+    toast(`Respaldo importado: ${r.leadsNuevos} leads nuevos (${r.total} en total)`);
+  } catch (e) {
+    toast(e instanceof SyntaxError ? 'Ese archivo no es un respaldo válido.' : e.message, { error: true, ms: 7000 });
+  }
 });
 $('#btn-borrar-demo').addEventListener('click', async () => {
   if (!confirm('¿Borrar todos los leads ficticios del modo demo?')) return;
